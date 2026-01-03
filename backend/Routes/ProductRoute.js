@@ -219,6 +219,34 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+//@route   GET /api/products/best-sellers
+//@desc    Get best-selling products
+//@access  Public
+router.get('/best-seller', async (req, res) => {
+  try {
+    const bestSellers = await Product.find().sort({ rating: -1 });
+    if (bestSellers) {
+      res.json(bestSellers);
+    } else {
+      res.status(404).json({ message: 'No best-selling products found' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+//@route   GET /api/products/new-arrivals
+//@desc    Get Retrieve latest 8 products-Creation date
+//@access  Public
+router.get('/new-arrival', async (req, res) => {
+  try {
+    const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
+    res.json(newArrivals);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
 // get single product
 //@route   GET /api/products/:id
 //@desc    Get single product by ID
@@ -249,7 +277,6 @@ router.get('/similar/:id', async (req, res) => {
       category: product.category,
       _id: { $ne: id },
       gender: product.gender,
-      category: product.category,
     }).limit(4);
     res.json(similarProducts);
   } catch (error) {
