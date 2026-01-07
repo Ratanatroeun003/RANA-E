@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const UserRoute = require('./Routes/UserRoute');
 const ProductRoute = require('./Routes/ProductRoute');
 const CartRoute = require('./Routes/CartRoute');
+const checkoutRout = require('./Routes/CheckoutRout');
 const connectDB = require('./config/db');
 dotenv.config();
 const app = express();
@@ -12,11 +13,12 @@ app.use(cors());
 const PORT = process.env.PORT || 5000;
 connectDB();
 app.get('/', (req, res) => {
-  res.send('hello RANA API');
+  res.send('hello RANA_E API');
 });
 app.use('/api/users', UserRoute);
 app.use('/api/products', ProductRoute);
 app.use('/api/cart', CartRoute);
+app.use('/api/checkout', checkoutRout);
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
