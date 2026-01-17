@@ -2,11 +2,15 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import login from '../assets/login.png';
+import { loginUser } from '../redux/slice/authSlice';
+import { useDispatch } from 'react-redux';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(loginUser({ email, password }));
     console.log('Register:', { email, password });
   };
   return (
@@ -50,7 +54,7 @@ const Login = () => {
             Sign In
           </button>
           <p className="mt-6 text-center text-sm">
-            Don't have an accound?
+            Don't have an account?
             <Link to={'/register'} className="text-sm text-blue-500">
               Register
             </Link>
