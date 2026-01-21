@@ -6,15 +6,17 @@ import checkOutReducer from './slice/checkoutSlice';
 import orderReducer from './slice/orderSlice';
 import adminReducer from './slice/adminSlice';
 import adminProductReducer from './slice/adminProductSlice';
+import adminOrderReducer from './slice/adminOrderSlice';
 const store = configureStore({
   reducer: {
     auth: authReducer,
     products: productReducer,
     cart: cartReducer,
     checkout: checkOutReducer,
-    order: orderReducer,
+    orders: orderReducer,
     admin: adminReducer,
-    adminProductSlice: adminProductReducer,
+    adminProducts: adminProductReducer,
+    adminOrders: adminOrderReducer,
   },
 });
 

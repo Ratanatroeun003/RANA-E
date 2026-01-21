@@ -1,11 +1,19 @@
 import { IoClose } from 'react-icons/io5';
 import CartContent from '../Cart/CartContent';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const CartDrewer = ({ drawerOpen, toggleDrawer }) => {
   const navigate = useNavigate();
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+  const userId = user ? user._id : null;
   const handleCheckout = () => {
     toggleDrawer();
-    navigate('/checkout');
+    if (!user) {
+      navigate('/login?redirect=checkout');
+    } else {
+      navigate('/checkout');
+    }
   };
   return (
     <div
@@ -21,19 +29,27 @@ const CartDrewer = ({ drawerOpen, toggleDrawer }) => {
       </div>
       <div className="flex-grow p-4 overflow-auto ">
         <h2 className="font-semibold text-md">Your Cart</h2>
-        <CartContent />
+        {cart && cart?.products?.length > 0 ? (
+          <CartContent cart={cart} userId={userId} guestId={guestId} />
+        ) : (
+          <p>Your cart is empty.</p>
+        )}
       </div>
       <div className="p-4 bottom-0 text-white bg-gray-200">
-        <button
-          onClick={handleCheckout}
-          className="bg-black w-full font-semibold py-2 mx-auto rounded-md mb-2 text-md"
-        >
-          Check Out
-        </button>
+        {cart && cart?.products?.length && (
+          <>
+            <button
+              onClick={handleCheckout}
+              className="bg-black w-full font-semibold py-2 mx-auto rounded-md mb-2 text-md"
+            >
+              Check Out
+            </button>
 
-        <p className=" text-sm  rounded-md text-black">
-          Shopping , Taxes, and disscound codes calculate at checkout.
-        </p>
+            <p className=" text-sm  rounded-md text-black">
+              Shopping , Taxes, and discount codes calculate at checkout.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

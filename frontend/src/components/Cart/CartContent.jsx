@@ -1,56 +1,97 @@
 import { RiDeleteBin3Line } from 'react-icons/ri';
-const CartContent = () => {
-  const cartProducts = [
-    {
-      productId: 1,
-      name: 'T-shirt',
-      size: 'M',
-      color: 'Red',
-      quanity: 2,
-      price: 20,
-      Image: 'https://picsum.photos/200/?random=1',
-    },
-    {
-      productId: 2,
-      name: 'T-shirt',
-      size: 'M',
-      color: 'blue',
-      quanity: 1,
-      price: 25,
-      Image: 'https://picsum.photos/200/?random=1',
-    },
-    {
-      productId: 3,
-      name: 'T-shirt',
-      size: 'M',
-      color: 'black',
-      quanity: 2,
-      price: 30,
-      Image: 'https://picsum.photos/200/?random=1',
-    },
-  ];
+import { useDispatch } from 'react-redux';
+import {
+  removeFromCart,
+  updateCartItemQuantity,
+} from '../../redux/slice/cartSlice';
+const CartContent = ({ cart, userId, guestId }) => {
+  const dispatch = useDispatch();
+
+  // Handle add or substracting to cart
+  const handleAddToCart = (productId, delta, quantity, size, color) => {
+    const newQuery = quantity + delta;
+    if (newQuery >= 1) {
+      dispatch(
+        updateCartItemQuantity({
+          productId,
+          quantity: newQuery,
+          guestId,
+          userId,
+          size,
+          color,
+        }),
+      );
+    }
+  };
+  const handleRemoveFromCart = (productId, size, color) => {
+    dispatch(
+      removeFromCart({
+        productId,
+        guestId,
+        userId,
+        size,
+        color,
+      }),
+    );
+  };
   return (
     <div>
-      {cartProducts.map((products, index) => (
+      {cart.products.map((product, index) => (
         <div key={index} className="cart-item">
           <div className="flex items-start justify-start  py-4 border-b">
             <img
-              src={products.Image}
+              src={product.image}
               alt=""
               className="w-20 h-24 object-cover mr-4 rounded"
             />
             <div className="text-sm">
-              <h3 className="text-gray-500">{products.name}</h3>
+              <h3 className="text-gray-500">{product.name}</h3>
               <p className="text-gray-500">
-                size:{products.size} | color:{products.color}
+                size:{product.size} | color:{product.color}
               </p>
-              <button className="border px-1"> - </button>
-              <span className="px-2">{products.quanity}</span>
-              <button className="border px-1"> + </button>
+              <button
+                onClick={() =>
+                  handleAddToCart(
+                    product.productId,
+                    -1,
+                    product.quantity,
+                    product.size,
+                    product.color,
+                  )
+                }
+                className="border rounded px-2 py-1 text-xl font-medium"
+              >
+                {' '}
+                -{' '}
+              </button>
+              <span className="px-2">{product.quantity}</span>
+              <button
+                onClick={() =>
+                  handleAddToCart(
+                    product.productId,
+                    1,
+                    product.quantity,
+                    product.size,
+                    product.color,
+                  )
+                }
+                className="border rounded px-2 py-1 text-xl font-medium"
+              >
+                {' '}
+                +{' '}
+              </button>
             </div>
             <div className="ml-auto flex flex-col items-end">
-              <p className="font-semibold text-md">${products.price}</p>
-              <button>
+              <p className="font-semibold text-md">${product.price}</p>
+              <button
+                onClick={() =>
+                  handleRemoveFromCart(
+                    product.productId,
+                    product.size,
+                    product.color,
+                  )
+                }
+              >
                 <RiDeleteBin3Line className="size-5 text-red-600" />
               </button>
             </div>

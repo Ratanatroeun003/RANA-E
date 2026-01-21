@@ -8,9 +8,14 @@ import {
 import SearchBar from './SearchBar';
 import CartDrewer from '../Layout/CartDrewer';
 import { IoClose } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+  const { cart } = useSelector((state) => state.cart);
+  const cartItemCount =
+    cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
+    0;
   const toggleNavDrawer = () => {
     setNavDrawerOpen(!navDrawerOpen);
   };
@@ -28,10 +33,10 @@ const Navbar = () => {
         </div>
         {/* center navigation link */}
         <div className="hidden md:flex space-x-6">
-          <Link to={'/collections/all'}>MEN</Link>
-          <Link to={'#'}>WEMEN</Link>
-          <Link to={'#'}>TOP WEAR</Link>
-          <Link to={'#'}>BUTTOM WEAR</Link>
+          <Link to="/collections/all?gender=Men">MEN</Link>
+          <Link to="/collections/all?gender=Women">WOMEN</Link>
+          <Link to="/collections/all?category=Top Wear">TOP WEAR</Link>
+          <Link to="/collections/all?category=Bottom Wear">BOTTOM WEAR</Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link
@@ -45,9 +50,11 @@ const Navbar = () => {
           </Link>
           <button className="relative" onClick={toggleDrawer}>
             <HiOutlineShoppingBag className="size-6" />
-            <span className="absolute rounded-full -top-1 bg-red-700 text-white text-xs w-4 h-4 flex items-center justify-center py-1\2 px-2">
-              4
-            </span>
+            {cartItemCount > 0 && (
+              <span className="absolute rounded-full -top-1 bg-red-700 text-white text-xs w-4 h-4 flex items-center justify-center py-1\2 px-2">
+                {cartItemCount}
+              </span>
+            )}
           </button>
           {/* searchbar */}
           <div className="overflow-hidden">
@@ -76,32 +83,32 @@ const Navbar = () => {
           <h2 className="text-xl font-semibold text-gray-500">Menu</h2>
           <nav className="space-y-4 p-4">
             <Link
-              to={'/'}
+              to="/collections/all?gender=Men"
               onClick={toggleNavDrawer}
               className="block text-gray-600 hover:text-black"
             >
               Men
             </Link>
             <Link
-              to={'/'}
+              to="/collections/all?gender=Women"
               onClick={toggleNavDrawer}
               className="block text-gray-600 hover:text-black"
             >
               Women
             </Link>
             <Link
-              to={'/'}
+              to="/collections/all?category=Top Wear"
               onClick={toggleNavDrawer}
               className="block text-gray-600 hover:text-black"
             >
-              Top wear
+              Top Wear
             </Link>
             <Link
-              to={'/'}
+              to="/collections/all?category=Bottom Wear"
               onClick={toggleNavDrawer}
               className="block text-gray-600 hover:text-black"
             >
-              Buttom wear
+              Bottom Wear
             </Link>
           </nav>
         </div>

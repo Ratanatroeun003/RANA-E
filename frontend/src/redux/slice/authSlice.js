@@ -25,7 +25,7 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
-        userData
+        userData,
       );
       localStorage.setItem('userInfo', JSON.stringify(res.data.user));
       localStorage.setItem('userToken', res.data.token);
@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
-  }
+  },
 );
 
 // REGISTER
@@ -43,17 +43,17 @@ export const registerUser = createAsyncThunk(
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/register`,
-        userData
+        userData,
       );
       localStorage.setItem('userInfo', JSON.stringify(res.data.user));
       localStorage.setItem('userToken', res.data.token);
       return res.data.user;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Register failed'
+        error.response?.data?.message || 'Register failed',
       );
     }
-  }
+  },
 );
 
 const authSlice = createSlice({
