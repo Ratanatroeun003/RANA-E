@@ -44,9 +44,9 @@ router.put('/:id', protect, admin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (user) {
-      (user.name = req.body.name || user.name),
+      ((user.name = req.body.name || user.name),
         (user.email = req.body.email || user.email),
-        (user.role = req.body.role || user.role);
+        (user.role = req.body.role || user.role));
     }
     const updateUser = await user.save();
     res

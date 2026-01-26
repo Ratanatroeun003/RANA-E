@@ -1,36 +1,28 @@
-const checkout = {
-  _id: 12323,
-  createAt: new Date(),
-  checkoutItems: [
-    {
-      productId: '1',
-      name: 'jacket',
-      color: 'black',
-      size: 'M',
-      price: 150,
-      quantity: 1,
-      image: 'https://picsum.photos/150?random=1',
-    },
-    {
-      productId: '2',
-      name: 'T-Shirt',
-      color: 'black',
-      size: 'M',
-      price: 159,
-      quantity: 1,
-      image: 'https://picsum.photos/150?random=2',
-    },
-  ],
-  shoppingAddress: {
-    address: '123 clothing brand',
-    city: 'Phnom Penh',
-    country: 'Cambodia',
-  },
-};
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { clearCart } from '../redux/slice/cartSlice';
 
 const OrderConfirmationPage = () => {
-  const culculateEstimatedDelivery = (createAt) => {
-    const orderDate = new Date(createAt);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { checkout } = useSelector((state) => state.checkout);
+  console.log(
+    'checkout state:',
+    useSelector((state) => state.checkout),
+  );
+
+  // clear the cart after order success
+  useEffect(() => {
+    if (checkout && checkout._id) {
+      dispatch(clearCart());
+      localStorage.removeItem('cart');
+    } else {
+      navigate('/my-orders');
+    }
+  }, [checkout, dispatch, navigate]);
+  const calculateEstimatedDelivery = (createdAt) => {
+    const orderDate = new Date(createdAt);
     orderDate.setDate(orderDate.getDate() + 10); // add 10 day to the order date
     return orderDate.toLocaleDateString();
   };
@@ -46,17 +38,17 @@ const OrderConfirmationPage = () => {
             <div>
               <h2 className="text-xl font-semibold ">OrderId:{checkout._id}</h2>
               <p className="text-gray-500">
-                Order date:{new Date(checkout.createAt).toLocaleDateString()}
+                Order date:{new Date(checkout.createdAt).toLocaleDateString()}
               </p>
             </div>
             <div>
               <p className="text-emerald-700 text-sm">
                 Estimated Delivery:{''}
-                {culculateEstimatedDelivery(checkout.createAt)}
+                {calculateEstimatedDelivery(checkout.createdAt)}
               </p>
             </div>
           </div>
-          {/* order itmes */}
+          {/* order items */}
           <div className="mb-20">
             {checkout.checkoutItems.map((items) => (
               <div key={items.productId} className="flex items-center mb-4">
@@ -88,11 +80,11 @@ const OrderConfirmationPage = () => {
             <div>
               <h4 className="text-lg font-semibold mb-2">Delivery</h4>
               <p className="text-gray-600">
-                {checkout.shoppingAddress.address}
+                {checkout.shippingAddress.address}
               </p>
               <p className="text-gray-600">
-                {checkout.shoppingAddress.city},{''}
-                {checkout.shoppingAddress.country}
+                {checkout.shippingAddress.city},{''}
+                {checkout.shippingAddress.country}
               </p>
             </div>
           </div>

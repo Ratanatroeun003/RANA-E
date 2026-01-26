@@ -11,14 +11,14 @@ const getCart = async (guestId, userId) => {
   if (guestId) {
     return await Cart.findOne({ guestId });
   } else if (userId) {
-    return await Cart.findOne({ userId });
+    return await Cart.findOne({ user: userId });
   }
   return null;
 };
 
 // Add item to cart
 router.post('/', async (req, res) => {
-  const { productId, size, color, quantity, guestId, userId } = req.body;
+  const { productId, size, color, quantity, guestId, user: userId } = req.body;
   try {
     const product = await Product.findById(productId);
     if (!product) {
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
         (p) =>
           p.productId.toString() === productId &&
           p.size === size &&
-          p.color === color
+          p.color === color,
       );
       if (productIndex > -1) {
         //product exists in cart, update quantity
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
       //recalculate total price
       cart.totalPrice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
 });
 //update cart item quantity or remove item
 router.put('/', async (req, res) => {
-  const { productId, size, color, guestId, userId, quantity } = req.body;
+  const { productId, size, color, guestId, user: userId, quantity } = req.body;
   try {
     let cart = await getCart(guestId, userId);
     if (!cart) {
@@ -93,7 +93,7 @@ router.put('/', async (req, res) => {
       (p) =>
         p.productId.toString() === productId &&
         p.size === size &&
-        p.color === color
+        p.color === color,
     );
     if (productIndex > -1) {
       // update quantity
@@ -105,7 +105,7 @@ router.put('/', async (req, res) => {
       // recalculate total price
       cart.totalPrice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -119,7 +119,7 @@ router.put('/', async (req, res) => {
 });
 //delete cart
 router.delete('/', async (req, res) => {
-  const { productId, size, color, guestId, userId } = req.body;
+  const { productId, size, color, guestId, user: userId } = req.body;
   try {
     let cart = await getCart(guestId, userId);
     if (!cart) {
@@ -130,13 +130,13 @@ router.delete('/', async (req, res) => {
       (p) =>
         p.productId.toString() === productId &&
         p.size === size &&
-        p.color === color
+        p.color === color,
     );
     if (productIndex > -1) {
       cart.products.splice(productIndex, 1);
       cart.totalPrice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -149,7 +149,7 @@ router.delete('/', async (req, res) => {
   }
 });
 router.get('/', async (req, res) => {
-  const { guestId, userId } = req.query;
+  const { guestId, user: userId } = req.query;
   try {
     const cart = await getCart(guestId, userId);
     if (!cart) {
@@ -168,7 +168,7 @@ router.post('/merge', protect, async (req, res) => {
   const { guestId } = req.body;
   try {
     const guestCart = await Cart.findOne({ guestId });
-    const userCart = await Cart.findOne({ userId: req.user.id });
+    const userCart = await Cart.findOne({ user: req.user.id });
     if (guestCart) {
       if (guestCart.products.length === 0) {
         res.status(400);
@@ -180,7 +180,7 @@ router.post('/merge', protect, async (req, res) => {
             (p) =>
               p.productId.toString() === guestItem.productId.toString() &&
               p.size === guestItem.size &&
-              p.color === guestItem.color
+              p.color === guestItem.color,
           );
           if (productIndex > -1) {
             // Item exists in user cart, update quantity
@@ -193,7 +193,7 @@ router.post('/merge', protect, async (req, res) => {
         // Recalculate total price
         userCart.totalPrice = userCart.products.reduce(
           (acc, item) => acc + item.price * item.quantity,
-          0
+          0,
         );
         await userCart.save();
         // remove guest cart after merging

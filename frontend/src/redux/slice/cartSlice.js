@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const loadCartFromStorage = () => {
   const storedCart = localStorage.getItem('cart');
-  return storedCart ? JSON.parse(storedCart) : { product: [] };
+  return storedCart ? JSON.parse(storedCart) : { products: [] };
 };
 const saveCartToStorage = (cart) => {
   localStorage.setItem('cart', JSON.stringify(cart));
@@ -15,21 +15,21 @@ export const fetchCart = createAsyncThunk(
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
-        { params: { userId, guestId } }
+        { params: { userId, guestId } },
       );
       return response.data;
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 // add an item to the cart for a user or guest
 export const addToCart = createAsyncThunk(
   'cart/addToCart',
   async (
     { productId, quantity, size, color, guestId, userId },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axios.post(
@@ -41,21 +41,21 @@ export const addToCart = createAsyncThunk(
           color,
           guestId,
           userId,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 // update the quantity of items on the cart
 export const updateCartItemQuantity = createAsyncThunk(
   'cart/updateCartItemQuantity',
   async (
     { productId, quantity, size, color, userId, guestId },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axios.put(
@@ -67,14 +67,14 @@ export const updateCartItemQuantity = createAsyncThunk(
           color,
           guestId,
           userId,
-        }
+        },
       );
       return response.data;
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 // remove an item from cart
 export const removeFromCart = createAsyncThunk(
@@ -91,7 +91,7 @@ export const removeFromCart = createAsyncThunk(
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 // Merge guest cart into userCart
 export const mergeCart = createAsyncThunk(
@@ -105,14 +105,14 @@ export const mergeCart = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem('userToken')}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 const cartSlice = createSlice({
   name: 'cart',
@@ -123,7 +123,7 @@ const cartSlice = createSlice({
   },
   reducers: {
     clearCart: (state) => {
-      state.cart = { product: [] };
+      state.cart = { products: [] };
       localStorage.removeItem('cart');
     },
   },

@@ -6,13 +6,14 @@ import {
   HiBars3BottomRight,
 } from 'react-icons/hi2';
 import SearchBar from './SearchBar';
-import CartDrewer from '../Layout/CartDrewer';
+import CartDrawer from '../Layout/CartDrawer';
 import { IoClose } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const { cart } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
   const cartItemCount =
     cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
     0;
@@ -39,12 +40,15 @@ const Navbar = () => {
           <Link to="/collections/all?category=Bottom Wear">BOTTOM WEAR</Link>
         </div>
         <div className="flex items-center space-x-4">
-          <Link
-            to={'/admin'}
-            className="block bg-black px-2 rounded text-sm text-white"
-          >
-            Admin
-          </Link>
+          {user && user.role === 'admin' && (
+            <Link
+              to={'/admin'}
+              className="block bg-black px-2 rounded text-sm text-white"
+            >
+              Admin
+            </Link>
+          )}
+
           <Link to={'/profile'} className="hover:text-black">
             <HiOutlineUser className="size-6" />
           </Link>
@@ -67,7 +71,7 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
-      <CartDrewer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
+      <CartDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
       {/* mobile nav drawer */}
       <div
         className={`fixed top-0 left-0 w-3/4 sm:w-1/2 md:w-1/3 h-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${

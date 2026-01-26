@@ -2,7 +2,7 @@ import { IoClose } from 'react-icons/io5';
 import CartContent from '../Cart/CartContent';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-const CartDrewer = ({ drawerOpen, toggleDrawer }) => {
+const CartDrawer = ({ drawerOpen, toggleDrawer }) => {
   const navigate = useNavigate();
   const { user, guestId } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
@@ -55,4 +55,4 @@ const CartDrewer = ({ drawerOpen, toggleDrawer }) => {
   );
 };
 
-export default CartDrewer;
+export default CartDrawer;

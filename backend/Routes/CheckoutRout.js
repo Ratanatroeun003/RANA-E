@@ -20,6 +20,7 @@ router.post('/', protect, async (req, res) => {
       paymentMethod,
       totalPrice,
       paymentStatus: 'Pending',
+      isFinalize: false,
       isPaid: false,
     });
     console.log(`checkout created for user:${req.user._id}`);
@@ -65,27 +66,34 @@ router.post('/:id/finalize', protect, async (req, res) => {
         message: 'Checkout not found',
       });
     }
-    if (checkout.isPaid && !checkout.isFinalized) {
+    if (checkout.isPaid && !checkout.isFinalize) {
       //create final order on the checkout detail
       const finalOrder = await Order.create({
         user: checkout.user,
-        orderItems: checkout.orderItems,
+        // ✅ បញ្ជាក់ឱ្យច្បាស់ថា ចម្លងពី checkoutItems ទៅ orderItems
+        orderItems: checkout.checkoutItems.map((item) => ({
+          productId: item.productId,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        })),
         shippingAddress: checkout.shippingAddress,
         paymentMethod: checkout.paymentMethod,
         totalPrice: checkout.totalPrice,
         isPaid: true,
         paidAt: checkout.paidAt,
-        isDelivered: false,
-        paymentStatus: 'paid',
-        paymentDetail: checkout.paymentDetail,
+        paymentStatus: 'Paid',
       });
       //Mark the checkout as finalized
-      (checkout.isFinalized = true), (checkout.finalizedAt = Date.now());
+      ((checkout.isFinalize = true), (checkout.finalizeAt = Date.now()));
       await checkout.save();
       // delete the cart associated with the user
       await Cart.findOneAndDelete({ user: checkout.user });
       res.status(201).json(finalOrder);
-    } else if (checkout.isFinalized) {
+    } else if (checkout.isFinalize) {
       res.status(400).json({ message: 'Checkout already finalized' });
     } else {
       res.status(400).json({

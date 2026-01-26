@@ -26,7 +26,7 @@ const orderItemSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 const orderSchema = new mongoose.Schema(
   {
@@ -35,7 +35,7 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    orderItem: [orderItemSchema],
+    orderItems: [orderItemSchema],
     shippingAddress: {
       address: { type: String, required: true },
       city: { type: String, required: true },
@@ -74,6 +74,6 @@ const orderSchema = new mongoose.Schema(
       default: 'Processing',
     },
   },
-  { timeseries: true }
+  { timestamps: true },
 );
 module.exports = mongoose.model('Order', orderSchema);

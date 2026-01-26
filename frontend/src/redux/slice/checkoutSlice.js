@@ -3,23 +3,23 @@ import axios from 'axios';
 
 export const createCheckout = createAsyncThunk(
   'checkout/createCheckout',
-  async (checkoutdata, { rejectWithValue }) => {
+  async (checkoutData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout`,
-        checkoutdata,
+        checkoutData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('userToken')}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 const checkOutSlice = createSlice({
   name: 'checkout',
@@ -41,7 +41,7 @@ const checkOutSlice = createSlice({
       })
       .addCase(createCheckout.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action.payload?.message || 'Checkout failed';
       });
   },
 });

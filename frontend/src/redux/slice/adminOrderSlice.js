@@ -77,9 +77,9 @@ const adminOrderSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
-        ((state.loading = false),
-          (state.orders = action.payload),
-          (state.totalOrders = action.payload.length));
+        state.loading = false;
+        state.orders = action.payload;
+        state.totalOrders = action.payload.length;
         // calculate total sale
         const totalSales = action.payload.reduce((acc, order) => {
           return acc + order.totalPrice;
@@ -87,7 +87,8 @@ const adminOrderSlice = createSlice({
         state.totalSales = totalSales;
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
-        ((state.loading = false), (state.error = action.payload.message));
+        state.loading = false;
+        state.error = action.payload.message;
       })
       // update orders status
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
